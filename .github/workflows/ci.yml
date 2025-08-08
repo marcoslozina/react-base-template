@@ -1,0 +1,41 @@
+name: CI - Frontend React App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install-build-test:
+    name: Lint, Build, Test & Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: 🧹 Lint code
+        run: npm run lint
+
+      - name: 🏗️ Build project
+        run: npm run build
+
+      - name: 🧪 Run unit tests and generate coverage
+        run: npm run coverage
+
+      - name: 📤 Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}  # <- agregado
+          files: ./coverage/lcov.info
+          fail_ci_if_error: true
+          verbose: true
